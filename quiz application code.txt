@@ -1,0 +1,138 @@
+﻿import os
+
+# Function to register a new user
+def signup():
+    print("===== Sign Up =====")
+    username = input("Enter a username: ")
+    
+    # Check if the username already exists
+    if check_user_exists(username):
+        print("Username already taken. Please choose another one.")
+        return None
+    
+    password = input("Enter a password: ")
+    with open("users.txt", "a") as file:
+        file.write(f"{username},{password}\n")
+    print("Signup successful! You can now log in.\n")
+    return username
+
+# Function to login an existing user
+def login():
+    print("===== Log In =====")
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+
+    # Check if the user exists and the password matches
+    if check_user_credentials(username, password):
+        print(f"Welcome {username}!\n")
+        return username
+    else:
+        print("Invalid username or password. Please try again.\n")
+        return None
+
+# Check if a username exists in the users file
+def check_user_exists(username):
+    if os.path.exists("users.txt"):
+        with open("users.txt", "r") as file:
+            users = file.readlines()
+            for user in users:
+                if user.split(",")[0] == username:
+                    return True
+    return False
+
+# Check if the username and password match in the users file
+def check_user_credentials(username, password):
+    if os.path.exists("users.txt"):
+        with open("users.txt", "r") as file:
+            users = file.readlines()
+            for user in users:
+                stored_username, stored_password = user.strip().split(",")
+                if stored_username == username and stored_password == password:
+                    return True
+    return False
+
+# Define questions, choices, and correct answers
+questions = [
+    {
+        "question": "What is the capital of France?",
+        "choices": ["a) Paris", "b) London", "c) Berlin", "d) Madrid"],
+        "correct_answer": "a"
+    },
+    {
+        "question": "Which programming language is known as the 'language of the web'?",
+        "choices": ["a) Python", "b) JavaScript", "c) Java", "d) C++"],
+        "correct_answer": "b"
+    },
+    {
+        "question": "Who wrote 'Hamlet'?",
+        "choices": ["a) William Shakespeare", "b) Charles Dickens", "c) Jane Austen", "d) Mark Twain"],
+        "correct_answer": "a"
+    },
+    {
+        "question": "What is the largest planet in our Solar System?",
+        "choices": ["a) Earth", "b) Mars", "c) Jupiter", "d) Saturn"],
+        "correct_answer": "c"
+    }
+]
+
+# Function to ask questions
+def ask_question(question, choices, correct_answer):
+    print(question)
+    for choice in choices:
+        print(choice)
+    answer = input("Your answer (a/b/c/d): ").strip().lower()
+
+    if answer == correct_answer:
+        return True
+    else:
+        return False
+
+# Main quiz function
+def run_quiz():
+    score = 0
+    total_questions = len(questions)
+
+    print("Welcome to the Python Quiz Application!\n")
+    print(f"Total Questions: {total_questions}\n")
+
+    # Loop through each question
+    for i, q in enumerate(questions, 1):
+        print(f"Question {i}:")
+        if ask_question(q["question"], q["choices"], q["correct_answer"]):
+            print("Correct!\n")
+            score += 1
+        else:
+            print("Incorrect!\n")
+
+    # Final score
+    print(f"Your final score is {score}/{total_questions}.")
+    if score == total_questions:
+        print("Congratulations! You got all the answers correct!")
+    elif score >= total_questions / 2:
+        print("Good job! You got more than half correct.")
+    else:
+        print("Better luck next time.")
+
+# Main function to handle the login/signup and quiz flow
+def main():
+    print("Welcome to the Quiz Application!\n")
+    
+    # Ask the user to either sign up or log in
+    action = input("Do you want to Log In or Sign Up? (Enter 'login' or 'signup'): ").strip().lower()
+    
+    user = None
+    if action == "signup":
+        user = signup()
+    elif action == "login":
+        user = login()
+
+    if user:
+        # Run the quiz only after successful login/signup
+        run_quiz()
+    else:
+        print("Exiting the application.")
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+
